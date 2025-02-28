@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jogo de Matemática</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .result {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Jogo de Matemática</h1>
+        <p>Responda o máximo de questões que puder!</p>
+        <div id="question"></div>
+        <input type="number" id="answer" placeholder="Digite sua resposta">
+        <button onclick="checkAnswer()">Enviar</button>
+        <div class="result" id="result"></div>
+        <audio id="correct-sound" src="correct.mp3" preload="auto"></audio>
+        <audio id="incorrect-sound" src="incorrect.mp3" preload="auto"></audio>
+    </div>
+
+    <script>
+        let num1, num2, operation, correctAnswer, score = 0, level = 1;
+
+        function generateQuestion() {
+            num1 = Math.floor(Math.random() * 10 * level) + 1;
+            num2 = Math.floor(Math.random() * 10 * level) + 1;
+            operation = Math.floor(Math.random() * 3);
+
+            switch (operation) {
+                case 0:
+                    correctAnswer = num1 + num2;
+                    document.getElementById('question').innerHTML = `${num1} + ${num2} = ?`;
+                    break;
+                case 1:
+                    correctAnswer = num1 - num2;
+                    document.getElementById('question').innerHTML = `${num1} - ${num2} = ?`;
+                    break;
+                case 2:
+                    correctAnswer = num1 * num2;
+                    document.getElementById('question').innerHTML = `${num1} * ${num2} = ?`;
+                    break;
+            }
+        }
+
+        function checkAnswer() {
+            const userAnswer = parseInt(document.getElementById('answer').value);
+            const resultElement = document.getElementById('result');
+            const correctSound = document.getElementById('correct-sound');
+            const incorrectSound = document.getElementById('incorrect-sound');
+
+            if (userAnswer === correctAnswer) {
+                score++;
+                level++;
+                resultElement.innerHTML = `Correto! Pontuação: ${score}`;
+                resultElement.className = 'result correct';
+                correctSound.play();
+            } else {
+                resultElement.innerHTML = `Errado! A resposta correta era ${correctAnswer}. Pontuação: ${score}`;
+                resultElement.className = 'result incorrect';
+                incorrectSound.play();
+            }
+            document.getElementById('answer').value = '';
+            generateQuestion();
+        }
+
+        generateQuestion();
+    </script>
+</body>
+</html>
