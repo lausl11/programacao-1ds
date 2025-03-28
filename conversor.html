@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Conversor de TXT para PDF</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        label, input, button {
+            display: block;
+            margin: 10px 0;
+        }
+        #pdfPreview {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Conversor de TXT para PDF</h1>
+    <label for="fileInput">Selecione um arquivo .txt:</label>
+    <input type="file" id="fileInput" accept=".txt">
+    <button onclick="gerarPDF()">Gerar PDF</button>
+
+    <h2>Visualização do PDF</h2>
+    <iframe id="pdfPreview" width="100%" height="500px"></iframe>
+
+    <script>
+        async function gerarPDF() {
+            const fileInput = document.getElementById("fileInput");
+            const pdfPreview = document.getElementById("pdfPreview");
+
+            if (!fileInput.files.length) {
+                alert("Por favor, selecione um arquivo .txt.");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const text = await file.text();
+
+            // Cria o PDF usando jsPDF
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+            const pageWidth = pdf.internal.pageSize.width;
+            const margin = 10;
+            const textWidth = pageWidth - 2 * margin;
+            const textLines = pdf.splitTextToSize(text, textWidth);
+
+            pdf.text(textLines, margin, 20);
+
+            // Exibe o PDF na visualização
+            const pdfBlob = pdf.output("blob");
+            const pdfUrl = URL.createObjectURL(pdfBlob);
+            pdfPreview.src = pdfUrl;
+
+            // Oferece download automático
+            pdf.save("arquivo.pdf");
+        }
+    </script>
+</body>
+</html>
